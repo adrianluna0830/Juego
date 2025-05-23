@@ -1,0 +1,37 @@
+# Ignorar carpetas de compilación
+bin/
+obj/
+Debug/
+Release/
+
+# Archivos generados por Visual Studio
+.vs/
+*.user
+*.suo
+*.userprefs
+
+# Archivos de Unity
+*.meta
+Library/
+Temp/
+Build/
+Builds/
+Logs/
+
+# Archivos de paquetes
+*.nupkg
+*.snupkg
+packages/
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de configuración local
+*.local
+*.env
+
+# Archivos de respaldo y temporales
+*.bak
+*.tmp
+*.log
