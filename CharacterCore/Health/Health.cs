@@ -8,10 +8,10 @@ public class Health : MonoBehaviour, IHitProcessor, IHitReact
     [Header("Health Configuration")] [SerializeField]
     private int maxHits = 5;
 
-    [SerializeField] private float regenerationInterval = 3f; // Tiempo entre cada ciclo de regeneración.
+    [SerializeField] private float regenerationInterval = 3f;
 
     [SerializeField]
-    private float waitBeforeRegeneration = 2f; // Tiempo que espera antes de empezar a regenerarse tras recibir daño.
+    private float waitBeforeRegeneration = 2f; 
 
     [SerializeField] public int _currentHits;
     private Coroutine _regenerationCoroutine;

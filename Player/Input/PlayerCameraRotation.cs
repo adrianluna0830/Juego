@@ -6,8 +6,8 @@ public class PlayerCameraRotation : MonoBehaviour
     [SerializeField] private float sensitivity;
 
     [Header("Límites de rotación vertical (X)")]
-    [SerializeField] private float upperLookLimit = -80f; // Mirar hacia arriba
-    [SerializeField] private float lowerLookLimit = 80f;  // Mirar hacia abajo
+    [SerializeField] private float upperLookLimit = -80f; 
+    [SerializeField] private float lowerLookLimit = 80f;  
 
     float cameraX;
     float cameraY;
@@ -24,11 +24,9 @@ public class PlayerCameraRotation : MonoBehaviour
     {
         Vector2 rotation = input * sensitivity * Time.deltaTime;
 
-        // Ajustamos el eje X y limitamos con Clamp
         cameraX -= rotation.y;
         cameraX = Mathf.Clamp(cameraX, upperLookLimit, lowerLookLimit);
 
-        // Eje Y (horizontal) no tiene límite en este caso
         cameraY += rotation.x;
 
         RotateCamera(new Vector2(cameraX, cameraY));

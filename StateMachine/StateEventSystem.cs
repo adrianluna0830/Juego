@@ -8,7 +8,7 @@ namespace DefaultNamespace.Systems.StateMachines.RunTime
 
         public event Action<IState> StateChanged;
         
-        // Evento notificado durante una transición de un estado a otro
+        // Evento notificado durante una transicion de un estado a otro
         public event Action<IState, IState> StateTransition; // Estado de origen, estado de destino
 
         // Invoca el evento que informa que el estado ha cambiado
@@ -17,8 +17,7 @@ namespace DefaultNamespace.Systems.StateMachines.RunTime
             StateChanged?.Invoke(newState);
         }
         
-        
-        // Invoca el evento de transición entre estados indicando el origen y destino
+        // Invoca el evento de transicion entre estados indicando el origen y destino
 
         public void NotifyStateTransition(IState fromState, IState toState)
         {

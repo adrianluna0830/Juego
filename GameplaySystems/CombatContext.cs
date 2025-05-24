@@ -8,18 +8,16 @@ public class CombatContext : MonoBehaviour
 
     [SerializeField] private Transform player;
 
-    // Variables serializables para configurar los anillos
-    [SerializeField] private float startRingDistance = 3f; // Distancia para el primer anillo
-    [SerializeField] private float ringStep = 3f; // Incremento de distancia entre anillos
-    [SerializeField] private int startSlots = 2; // Slots del primer anillo
-    [SerializeField] private int slotStep = 2; // Incremento de slots para anillos sucesivos
-    [SerializeField] private int ringCount = 3; // Cantidad de anillos
+    [SerializeField] private float startRingDistance = 3f; 
+    [SerializeField] private float ringStep = 3f; 
+    [SerializeField] private int startSlots = 2; 
+    [SerializeField] private int slotStep = 2; 
+    [SerializeField] private int ringCount = 3; 
     public RingManager _ringManager;
     private List<Transform> enemies = new List<Transform>();
     public List<Transform> Enemies => enemies;
 
 
-    // Maneja la lógica de los anillos
 
     private void Awake()
     {
@@ -39,7 +37,6 @@ public class CombatContext : MonoBehaviour
     {
         enemies.Add(enemyTransform);
         _ringManager.AgregarTransform(enemyTransform);
-        // Cuando muera, se retiran de ambos sitios
         enemyTransform.GetComponent<Health>().OnDeath += (() =>
         {
             _ringManager.RemoverTransform(enemyTransform);

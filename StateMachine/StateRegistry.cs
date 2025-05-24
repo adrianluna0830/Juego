@@ -6,30 +6,33 @@ using UnityEngine;
 namespace DefaultNamespace.Systems.StateMachines.RunTime
 {
     /// <summary>
-    /// Maintains a registry of states and their corresponding StateNode objects.
-    /// This class provides mechanisms for registering states, checking if a state is registered,
-    /// and retrieving the associated StateNode for a specific state. It ensures that each state
-    /// is uniquely registered within the registry.
+    /// Mantiene un registro de estados y sus objetos StateNode correspondientes.
+    /// Esta clase provee mecanismos para registrar estados, verificar si un estado
+    /// esta registrado y obtener el StateNode asociado a un estado especifico.
+    /// Asegura que cada estado sea registrado unicamente en el registro.
     /// </summary>
     public class StateRegistry
     {
         /// <summary>
-        /// A private field in the StateRegistry class that maps instances of <see cref="IState"/>
-        /// to their corresponding <see cref="StateNode"/> representations.
+        /// Campo privado en la clase StateRegistry que mapea instancias de <see cref="IState"/>
+        /// a sus representaciones correspondientes <see cref="StateNode"/>.
         /// </summary>
         /// <remarks>
-        /// This dictionary acts as a registry for managing state nodes, allowing the system
-        /// to track and manipulate states and their associations. It provides quick lookup
-        /// functionalities to retrieve nodes associated with specific states.
+        /// Este diccionario actua como un registro para manejar nodos de estado,
+        /// permitiendo al sistema rastrear y manipular estados y sus asociaciones.
+        /// Provee funcionalidades de busqueda rapida para obtener nodos asociados a estados especificos.
         /// </remarks>
         private readonly Dictionary<IState, StateNode> _stateNodes = new Dictionary<IState, StateNode>();
         private readonly Dictionary<Type, StateNode> _stateNodesType = new Dictionary<Type, StateNode>();
         
         public IState[] GetStates() => _stateNodes.Keys.ToArray();
-        /// Retrieves the StateNode associated with the given IState.
-        /// <param name="state">The state for which the corresponding StateNode is to be retrieved.</param>
+
+        /// <summary>
+        /// Obtiene el StateNode asociado al IState dado.
+        /// </summary>
+        /// <param name="state">El estado para el cual se desea obtener el StateNode correspondiente.</param>
         /// <returns>
-        /// The StateNode associated with the provided state, or null if the state is not registered in the registry.
+        /// El StateNode asociado al estado proporcionado, o null si el estado no esta registrado en el registro.
         /// </returns>
         public StateNode GetNode(IState state)
         {
@@ -37,46 +40,41 @@ namespace DefaultNamespace.Systems.StateMachines.RunTime
             {
                 return null;
             }
-            
             return node;
         }
         
-
-
         /// <summary>
-        /// Registers a new state into the state registry. Ensures a unique state instance is registered.
-        /// Throws an exception if the state is already registered.
+        /// Registra un nuevo estado en el registro de estados. Asegura que se registre una instancia unica.
+        /// Lanza una excepcion si el estado ya esta registrado.
         /// </summary>
-        /// <param name="state">The state instance to be registered. Must implement the IState interface.</param>
-        /// <exception cref="Exception">Thrown if the state is already registered in the system with a message indicating the state type.</exception>
+        /// <param name="state">La instancia del estado a registrar. Debe implementar la interfaz IState.</param>
+        /// <exception cref="Exception">Se lanza si el estado ya esta registrado en el sistema con un mensaje indicando el tipo de estado.</exception>
         public void RegisterState(IState state)
         {
             if (_stateNodes.ContainsKey(state))
             {
-                throw new Exception($"Estado {state.GetType().Name} ya está registrado");
+                throw new Exception($"Estado {state.GetType().Name} ya esta registrado");
             }
 
             _stateNodesType[state.GetType()] = new StateNode(state);
-
-            
             _stateNodes[state] = new StateNode(state);
         }
 
         /// <summary>
-        /// Determines whether a given state is registered in the state registry.
+        /// Determina si un estado dado esta registrado en el registro de estados.
         /// </summary>
-        /// <param name="state">The state to check for registration in the registry.</param>
-        /// <returns>True if the state is registered; otherwise, false.</returns>
+        /// <param name="state">El estado para verificar su registro en el registro.</param>
+        /// <returns>True si el estado esta registrado; de lo contrario, false.</returns>
         public bool IsRegistered(IState state)
         {
             return _stateNodes.ContainsKey(state);
         }
 
-
-
-        /// Checks if the specified state is already registered in the state registry.
-        /// If the state is not registered, registers the state by creating and adding a new StateNode for it.
-        /// <param name="state">The state to be checked and registered if not already present in the registry.</param>
+        /// <summary>
+        /// Verifica si el estado especificado ya esta registrado en el registro.
+        /// Si no esta registrado, registra el estado creando y agregando un nuevo StateNode para el.
+        /// </summary>
+        /// <param name="state">El estado a verificar y registrar si no esta presente en el registro.</param>
         public void CheckAndRegisterState(IState state)
         {
             if (!IsRegistered(state))

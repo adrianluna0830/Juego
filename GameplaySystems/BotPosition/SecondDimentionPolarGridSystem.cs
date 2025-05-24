@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class SecondDimentionPolarGridSystem
 {
-    private readonly float ringStep; // Distancia entre cada anillo
-    private readonly float sectorStep; // Distancia mínima para los sectores
+    private readonly float ringStep; 
+    private readonly float sectorStep; 
 
     public SecondDimentionPolarGridSystem(float ringStep, float sectorStep)
     {
@@ -14,22 +14,16 @@ public class SecondDimentionPolarGridSystem
 
     public Vector2 GetTileCenter(int ring, int sector, Vector2 origin)
     {
-        // Aseguramos que el ring sea positivo (si es negativo, usamos el anillo 0)
         ring = Mathf.Max(0, ring);
 
-        // 1. Calcular el radio del anillo
         float startRadius = ring * ringStep;
         float endRadius = (ring + 1) * ringStep;
         float avgRadius = (startRadius + endRadius) / 2;
 
-        // 2. Calcular el número total de sectores para este anillo
         int totalSectors = CalculateTotalSectors(avgRadius);
 
-        // 3. Aplicar loopback para asegurar que el sector esté dentro del rango válido
-        // Si sector es negativo o mayor que el total, lo "envolvemos" para que caiga en el rango [0, totalSectors-1]
         sector = ((sector % totalSectors) + totalSectors) % totalSectors;
 
-        // 4. Calcular la posición del centro del sector
         return CalculateSectorCenterPosition(sector, totalSectors, avgRadius, origin);
     }
 
@@ -65,7 +59,6 @@ public class SecondDimentionPolarGridSystem
 
     public float GetSectorArcLength(int ring)
     {
-        // Aseguramos que el ring sea positivo
         ring = Mathf.Max(0, ring);
 
         // Calculamos el radio del anillo (promedio)
@@ -73,10 +66,8 @@ public class SecondDimentionPolarGridSystem
         float endRadius = (ring + 1) * ringStep;
         float avgRadius = (startRadius + endRadius) / 2;
 
-        // Obtenemos el número total de sectores para este anillo
         int totalSectors = CalculateTotalSectors(avgRadius);
 
-        // Calculamos la longitud de arco para un sector en este anillo
         float circumference = 2 * Mathf.PI * avgRadius;
         float arcLength = circumference / totalSectors;
 
@@ -86,7 +77,6 @@ public class SecondDimentionPolarGridSystem
 
     public float GetRingHeight()
     {
-        // La altura o anchura radial de un anillo es simplemente el ringStep
         return ringStep;
     }
 
@@ -124,7 +114,6 @@ public class SecondDimentionPolarGridSystem
             return -1;
         }
 
-        // Determinar el índice del anillo según su distancia
         int ringIndex = Mathf.FloorToInt(distance / ringStep);
         return ringIndex;
     }

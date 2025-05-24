@@ -20,17 +20,7 @@ public class AgentBoid : MonoBehaviour
         return direction.normalized * AgentBoidData.AgentAcceleration;
     }
 
-    // public Vector3 GetSeparationVector()
-    // {
-    //     Vector3 separationForce = FlockUtils.Separation(transform.position,
-    //         DetectionUtils.GetNearbyAgents(AgentBoidData.SeparationDistance, transform),
-    //         AgentBoidData.SeparationDistance) * AgentBoidData.SeparationWeight;
-    //     
-    //     DebugExtension.DebugCircle(transform.position + new Vector3(0,1,0),Color.red,AgentBoidData.SeparationDistance);
-    //     return separationForce;
-    // }
-    //
-    
+
     public Vector3 GetEscapeFromGroupForce()
     {
         // Force to separate from nearby agents, prioritizing the closest ones

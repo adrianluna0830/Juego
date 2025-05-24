@@ -5,27 +5,31 @@ using UnityEngine;
 
 public class AttackSlotManager : MonoBehaviour
 {
-    [Header("Pesos de prioridad")] [SerializeField]
+    [SerializeField]
     private float alignmentWeight = 0.5f;
 
-    [SerializeField] private float rangeWeight = 0.8f;
+    [SerializeField]
+    private float rangeWeight = 0.8f;
 
-    [Header("Pesos de prioridad adicionales")] [SerializeField]
+    [SerializeField]
     private float healthWeight = 1.2f;
 
-    [Header("Peso mínimo")] [SerializeField]
+    [SerializeField]
     private float requiredMinimumWeight = 0.5f;
 
-    [Header("Slots y tiempos")] [SerializeField]
+    [SerializeField]
     private int maxSlots = 3;
 
-    [SerializeField] private float slotRecoveryTime = 2f;
-    [SerializeField] private float attackCooldownTime = 4f;
+    [SerializeField]
+    private float slotRecoveryTime = 2f;
 
-    [Header("Asignación de slots")] [SerializeField]
+    [SerializeField]
+    private float attackCooldownTime = 4f;
+
+    [SerializeField]
     private float slotAssignmentInterval = 2f;
 
-    [Header("Referencias")] [SerializeField]
+    [SerializeField]
     private Transform player;
 
     public int currentSlots;
@@ -50,11 +54,6 @@ public class AttackSlotManager : MonoBehaviour
 
     private void Update()
     {
-        // Recordatorio: actualiza la lista de enemigos en CombatContext si es necesario (por ej. llamando a un método 
-        // que limpie referencias rotas o use la información de la escena). Esto asegura que 'Enemies' refleje 
-        // correctamente el estado actual de la escena en cada frame.
-        // CombatContext.Instance.ActualizarListaEnemigos(); // Ejemplo si tuvieras un método que haga esto.
-
         UpdateCooldowns();
         RegenerateSlots();
 
@@ -80,8 +79,6 @@ public class AttackSlotManager : MonoBehaviour
             return;
         }
 
-        // Tomamos la lista de enemigos actualizada directamente desde CombatContext.
-        // Asegúrate de que CombatContext.Instance.Enemies siempre refleje qué enemigos siguen vivos.
         var combatEnemies = CombatContext.Instance.Enemies;
         var weightedEnemies = new List<EnemyWeightData>();
 
@@ -97,7 +94,6 @@ public class AttackSlotManager : MonoBehaviour
             if (enemyCombat == null)
                 continue;
 
-            // Evitar enemigos que ya estén atacando, en hitState o en cooldown.
             if (enemyCombat.attacking || enemyCombat.isInHitState || IsInCooldown(enemyCombat))
                 continue;
 
@@ -109,17 +105,14 @@ public class AttackSlotManager : MonoBehaviour
             });
         }
 
-        // Si no hay enemigos elegibles, salimos.
         if (weightedEnemies.Count == 0)
         {
             Debug.Log("[AttemptSingleSlotAssignment] No hay enemigos elegibles para asignar slot.");
             return;
         }
 
-        // Elegimos el que tenga mayor peso.
         var bestEnemy = weightedEnemies.OrderByDescending(x => x.TotalWeight).First();
 
-        // Revisamos si supera el peso mínimo requerido.
         if (bestEnemy.TotalWeight < requiredMinimumWeight)
         {
             Debug.Log(
@@ -130,7 +123,6 @@ public class AttackSlotManager : MonoBehaviour
             return;
         }
 
-        // Asignamos un slot al enemigo
         AssignSingleSlot(bestEnemy);
     }
 
@@ -149,25 +141,20 @@ public class AttackSlotManager : MonoBehaviour
     {
         if (enemyCooldowns.Count == 0) return;
 
-        // Convertimos las claves a lista para poder modificar el diccionario mientras iteramos
         var keys = enemyCooldowns.Keys.ToList();
 
         foreach (var enemy in keys)
         {
-            // Si el objeto ya no existe, lo quitamos y continuamos
             if (enemy == null)
             {
                 enemyCooldowns.Remove(enemy);
                 continue;
             }
 
-            // Restamos el tiempo de cooldown
             enemyCooldowns[enemy] -= Time.deltaTime;
 
-            // Cuando termina el cooldown
             if (enemyCooldowns[enemy] <= 0f)
             {
-                // Verificamos nuevamente que el enemigo no sea nulo
                 if (enemy != null)
                 {
                     Debug.Log($"[Cooldown] Enemigo {enemy.name} sale de cooldown.");
@@ -177,12 +164,10 @@ public class AttackSlotManager : MonoBehaviour
                     Debug.Log("[Cooldown] Un enemigo destruido ha salido de cooldown.");
                 }
 
-                // Lo eliminamos del diccionario
                 enemyCooldowns.Remove(enemy);
             }
         }
     }
-
 
     private bool IsInCooldown(EnemyCombat enemy)
     {
@@ -205,16 +190,13 @@ public class AttackSlotManager : MonoBehaviour
     {
         Vector3 directionToEnemy = (enemy.position - playerPos).normalized;
 
-        // Alineación: cuanto menos coincidan las direcciones, más grande será el factor.
         float alignmentDot = Vector3.Dot(playerForward, directionToEnemy);
         float alignmentScore = (1f - alignmentDot) * alignmentWeight;
 
-        // Distancia: enemigo más cercano => más puntaje.
         float distance = Vector3.Distance(playerPos, enemy.position);
         float maxRange = 20f;
         float rangeScore = (1f - Mathf.Clamp01(distance / maxRange)) * rangeWeight;
 
-        // Vida: enemigo con más vida => más prioridad.
         float healthScore = 0f;
         var enemyHealth = enemy.GetComponent<Health>();
         if (enemyHealth != null)

@@ -99,36 +99,12 @@ public class PhysicsMovement : MonoBehaviour
         }
     }
     
-    [SerializeField] private float velocitySmoothTime = 0.15f; // Ajusta este valor según tus necesidades
+    [SerializeField] private float velocitySmoothTime = 0.15f; 
 
-    private Vector3 _targetVelocity = Vector3.zero; // La velocidad objetivo antes del suavizado
-    private Vector3 _smoothDampVelocity; // Variable de referencia para SmoothDamp
+    private Vector3 _targetVelocity = Vector3.zero; 
+    private Vector3 _smoothDampVelocity; 
     
-    public void ApplySmoothForce(Vector3 force, float speedLimit = 0, float customSmoothTime = -1)
-    {
-        float actualSmoothTime = customSmoothTime > 0 ? customSmoothTime : velocitySmoothTime;
-
-        // Calculamos la nueva velocidad objetivo sumando la fuerza al vector velocidad actual
-        Vector3 targetVelocity = _velocity + force * Time.deltaTime;
-
-        // Suavizamos la velocidad actual hacia la velocidad objetivo
-        _velocity = Vector3.SmoothDamp(
-            _velocity,         // current: velocidad actual
-            targetVelocity,    // target: velocidad objetivo
-            ref _smoothDampVelocity,  // referencia para la velocidad de suavizado interna
-            actualSmoothTime
-        );
-
-        // Limitar la velocidad horizontal si es necesario
-        if (speedLimit != 0)
-        {
-            LimitHorizontalSpeed(ref _velocity, speedLimit);
-        }
-
-        _targetVelocity = _velocity;
-
-        DebugExtension.DebugArrow(transform.position + new Vector3(0,1,0), _velocity, Color.black);
-    }
+ 
 }
 
 

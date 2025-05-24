@@ -3,13 +3,12 @@
 namespace DefaultNamespace.Systems.StateMachines.RunTime
 {
     /// <summary>
-    /// Manages transitions between states within a state machine.
-    /// Provides functionality for adding automatic and event-based transitions between states,
-    /// as well as evaluating transitions based on specified conditions or events.
+    /// Maneja las transiciones entre estados dentro de una maquina de estados.
+    /// Proporciona funcionalidad para agregar transiciones automaticas y basadas en eventos entre estados,
+    /// asi como evaluar transiciones basadas en condiciones o eventos especificos.
     /// </summary>
     public class TransitionManager
     {
-   
         private readonly StateRegistry _registry;
         
         public TransitionManager(StateRegistry registry)
@@ -17,13 +16,14 @@ namespace DefaultNamespace.Systems.StateMachines.RunTime
             _registry = registry;
         }
 
-
-        /// Adds an automatic transition between two states with a specified condition.
-        /// The transition will be evaluated during transition checks and, when the condition is met,
-        /// the state machine will transition from the "from" state to the "to" state.
-        /// <param name="from">The source state where the automatic transition starts.</param>
-        /// <param name="to">The target state to transition to if the condition is satisfied.</param>
-        /// <param name="condition">The condition function to be evaluated to determine if the transition should occur.</param>
+        /// <summary>
+        /// Agrega una transicion automatica entre dos estados con una condicion especificada.
+        /// La transicion se evaluara durante las comprobaciones y cuando la condicion se cumpla,
+        /// la maquina de estados transicionara del estado "from" al estado "to".
+        /// </summary>
+        /// <param name="from">Estado origen donde inicia la transicion automatica.</param>
+        /// <param name="to">Estado destino al que se transiciona si la condicion se cumple.</param>
+        /// <param name="condition">Funcion condicion que se evalua para determinar si se debe realizar la transicion.</param>
         public void AddAutoTransition(IState from, IState to, Func<bool> condition)
         {
             _registry.CheckAndRegisterState(from);
@@ -33,12 +33,13 @@ namespace DefaultNamespace.Systems.StateMachines.RunTime
             fromNode.Auto.Add(new Transition(to, condition));
         }
 
-
-        /// Adds an event-based transition between two states with a specified condition.
-        /// The transition is triggered when the condition is evaluated during an event.
-        /// <param name="from">The state from which the transition originates.</param>
-        /// <param name="to">The state to which the transition leads.</param>
-        /// <param name="condition">A function that determines if the transition should occur when evaluated.</param>
+        /// <summary>
+        /// Agrega una transicion basada en eventos entre dos estados con una condicion especificada.
+        /// La transicion se dispara cuando la condicion es evaluada durante un evento.
+        /// </summary>
+        /// <param name="from">Estado origen de la transicion.</param>
+        /// <param name="to">Estado destino de la transicion.</param>
+        /// <param name="condition">Funcion que determina si la transicion debe ocurrir al evaluarse.</param>
         public void AddEventTransition(IState from, IState to, Func<bool> condition)
         {
             _registry.CheckAndRegisterState(from);
@@ -47,15 +48,14 @@ namespace DefaultNamespace.Systems.StateMachines.RunTime
             var fromNode = _registry.GetNode(from);
             fromNode.Event.Add(new Transition(to, condition));
         }
-        
 
-
-
-        /// Evaluates the conditions of automatic transitions for the given current state.
-        /// If any condition is met, returns the target state of the first valid transition.
-        /// If no valid transition is found, returns null.
-        /// <param name="currentState">The current state to evaluate automatic transitions from.</param>
-        /// <returns>The target state of the valid automatic transition, or null if no valid transition exists.</returns>
+        /// <summary>
+        /// Evalua las condiciones de las transiciones automaticas para el estado actual dado.
+        /// Si alguna condicion se cumple, retorna el estado destino de la primera transicion valida.
+        /// Si no hay transiciones validas, retorna null.
+        /// </summary>
+        /// <param name="currentState">Estado actual para evaluar las transiciones automaticas.</param>
+        /// <returns>Estado destino de la transicion automatica valida, o null si no existe.</returns>
         public IState EvaluateAutoTransitions(IState currentState)
         {
             if (!_registry.IsRegistered(currentState))
@@ -63,19 +63,20 @@ namespace DefaultNamespace.Systems.StateMachines.RunTime
 
             var node = _registry.GetNode(currentState);
 
-            foreach (var transition in node.Auto) // Itera sobre las transiciones automáticas del nodo
-                if (transition.Condition()) // Verifica si la condición de la transición se cumple
-                    return transition.TargetState; // Retorna el estado objetivo si la condición es verdadera
+            foreach (var transition in node.Auto) // Itera sobre transiciones automaticas del nodo
+                if (transition.Condition()) // Verifica si la condicion se cumple
+                    return transition.TargetState; // Retorna estado destino si condicion es verdadera
 
-            return null; // Retorna null si no se cumple ninguna condición de transición
+            return null; // Retorna null si ninguna condicion se cumple
         }
 
-
-        /// Evaluates event-based transitions for a given current state and attempts to determine
-        /// if transitioning to the specified target state is possible based on the defined conditions.
-        /// <param name="currentState">The current state from which the event-based transitions are evaluated. Must be a registered state.</param>
-        /// <param name="targetState">The potential target state for the transition. The transition occurs if the associated condition is met.</param>
-        /// <returns>Returns the target state if the evaluation condition is satisfied; otherwise, returns null if no condition is met or the state is not registered.</returns>
+        /// <summary>
+        /// Evalua transiciones basadas en eventos para un estado actual dado e intenta determinar
+        /// si es posible transicionar al estado destino especificado basado en las condiciones definidas.
+        /// </summary>
+        /// <param name="currentState">Estado actual desde el cual se evaluan transiciones basadas en eventos. Debe estar registrado.</param>
+        /// <param name="targetState">Estado potencial destino para la transicion. La transicion ocurre si la condicion se cumple.</param>
+        /// <returns>Retorna el estado destino si la condicion se cumple; de lo contrario, null si no hay condicion cumplida o estado no registrado.</returns>
         public IState EvaluateEventTransition(IState currentState, IState targetState)
         {
             if (!_registry.IsRegistered(currentState))
@@ -83,13 +84,12 @@ namespace DefaultNamespace.Systems.StateMachines.RunTime
 
             var node = _registry.GetNode(currentState);
 
-            foreach (var transition in node.Event) // Itera sobre las transiciones basadas en eventos del nodo
+            foreach (var transition in node.Event) // Itera sobre transiciones basadas en eventos del nodo
                 if (transition.TargetState == targetState &&
-                    transition
-                        .Condition()) // Verifica si el estado objetivo coincide y si se cumple la condición de la transición
-                    return targetState; // Retorna el estado objetivo si se cumple la condición
+                    transition.Condition()) // Verifica estado destino y condicion
+                    return targetState; // Retorna estado destino si condicion se cumple
 
-            return null; // Retorna null si no se cumple ninguna condición de transición
+            return null; // Retorna null si ninguna condicion se cumple
         }
     }
 }
